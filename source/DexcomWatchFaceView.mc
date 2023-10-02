@@ -191,6 +191,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
     private function drawBattery(dc) {
         var battery = System.getSystemStats().battery;
+        var batteryText = battery.format("%d") + "\u0025";
 
         var height = 12;
         var width = 18;
@@ -199,7 +200,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
         dc.setPenWidth(2);
         dc.setColor(
-            battery <= 20 ? Graphics.COLOR_DK_RED : Graphics.COLOR_WHITE,
+            battery <= 20 ? Graphics.COLOR_DK_RED : Graphics.COLOR_GREEN,
             Graphics.COLOR_TRANSPARENT
         );
         // Draw the outer rect
@@ -230,7 +231,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
             x - 6,
             screenHeight / 2,
             dateFont,
-            battery.format("%d"),
+            batteryText,
             Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER
         );
     }
