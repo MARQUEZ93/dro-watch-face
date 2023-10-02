@@ -9,9 +9,6 @@ using Toybox.Time.Gregorian as Date;
 class DexcomFaceWatchView extends WatchUi.WatchFace {
     private var screenWidth;
     private var screenHeight;
-    private var hoursFont;
-    private var minutesFont;
-    private var dateFont;
     private var heart;
     private var showSeconds = false;
     private var isLowPowerMode = false;
@@ -19,10 +16,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
     function initialize() {
         WatchFace.initialize();
-
-        hoursFont = Application.loadResource(Rez.Fonts.HoursFont);
-        minutesFont = Application.loadResource(Rez.Fonts.MinutesFont);
-        dateFont = Application.loadResource(Rez.Fonts.DateFont);
     }
 
     function onSettingsChanged() {
@@ -93,7 +86,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         dc.drawText(
             x - 2,
             y,
-            hoursFont,
+            Graphics.FONT_SMALL,
             hours,
             Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER
         );
@@ -102,7 +95,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         dc.drawText(
             x + 2,
             y,
-            minutesFont,
+            Graphics.FONT_SMALL,
             minutes,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
         );
@@ -138,7 +131,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         dc.drawText(
             x,
             y,
-            dateFont,
+            Graphics.FONT_SMALL,
             seconds,
             Graphics.TEXT_JUSTIFY_LEFT
         );
@@ -147,13 +140,13 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     private function drawDate(dc) {
         var now = Time.now();
         var date = Date.info(now, Time.FORMAT_MEDIUM);
-        var dateString = Lang.format("$1$, $2$ $3$", [date.day_of_week, date.month, date.day]);
+        var dateString = Lang.format("$1$ $2$ $3$", [date.day_of_week, date.month, date.day]);
 
         dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             screenWidth / 2,
             35,
-            dateFont,
+            Graphics.FONT_SMALL,
             dateString,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
         );
@@ -183,7 +176,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         dc.drawText(
             x,
             y,
-            dateFont,
+            Graphics.FONT_SMALL,
             (heartRate == 0 || heartRate == null) ? "--" : heartRate.format("%d"),
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
         );
@@ -230,7 +223,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         dc.drawText(
             x - 6,
             screenHeight / 2,
-            dateFont,
+            Graphics.FONT_SMALL,
             batteryText,
             Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER
         );
