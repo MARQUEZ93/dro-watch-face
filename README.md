@@ -1,4 +1,4 @@
-# Dexcom Garmin WatchFace
+# Dexcom Garmin Watch Face
 
 ---
 
