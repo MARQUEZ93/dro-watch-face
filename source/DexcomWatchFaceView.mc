@@ -75,20 +75,43 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
     private function drawHoursMinutes(dc) {
         var clockTime = System.getClockTime();
-        var hours = clockTime.hour.format("%02d");
-        var minutes = clockTime.min.format("%02d");
+        var hours = clockTime.hour;
+        var am_pm = "AM";
 
-        var x = screenWidth / 2;
-        var y = screenHeight - 20;
+        // Convert to 12-hour format
+        if (hours >= 12) {
+            am_pm = "PM";
+        }
+        if (hours > 12) {
+            hours -= 12;
+        }
+        if (hours == 0) {
+            hours = 12;
+        }
+
+        var hoursString = hours.format("%d");
+        var minutesString = clockTime.min.format("%02d");
+
+        var x = screenWidth / 2; // Centered horizontally
+        var y = screenHeight / 2; // Centered vertically
 
         // Draw hours
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             x - 2,
             y,
             Graphics.FONT_SMALL,
-            hours,
+            hoursString,
             Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER
+        );
+
+        // Draw the colon (optional)
+        dc.drawText(
+            x,
+            y,
+            Graphics.FONT_SMALL,
+            ":",
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
         );
 
         // Draw minutes
@@ -96,10 +119,20 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
             x + 2,
             y,
             Graphics.FONT_SMALL,
-            minutes,
+            minutesString,
+            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
+        );
+
+        // Draw AM/PM (optional)
+        dc.drawText(
+            x + 18,  // Adjusted for visual placement
+            y,
+            Graphics.FONT_SMALL,
+            am_pm,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
         );
     }
+
 
     private function drawSecondsText(dc, isPartialUpdate) {
         if (!showSeconds || isHidden) {
@@ -145,7 +178,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             screenWidth / 2,
-            35,
+            30,
             Graphics.FONT_SMALL,
             dateString,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
@@ -166,19 +199,23 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         }
 
         var heartResource = heart.getResource();
-        var x = screenWidth * 3 / 4 + heartResource.getWidth() + 4; // Margin right
-        var y = screenHeight / 2;
 
         dc.setColor(
-            (heartRate != null && heartRate > 120) ? Graphics.COLOR_DK_RED : Graphics.COLOR_WHITE,
+            (heartRate != null && heartRate > 120) ? Graphics.COLOR_DK_RED : Graphics.COLOR_LT_GRAY,
             Graphics.COLOR_TRANSPARENT
         );
+        var angle_deg = 240; // 8 PM on the clock in degrees
+        var angle_rad = angle_deg * (Math.PI / 180);
+        var radius = screenWidth / 4; 
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad);
+        var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
+    
         dc.drawText(
             x,
             y,
             Graphics.FONT_SMALL,
             (heartRate == 0 || heartRate == null) ? "--" : heartRate.format("%d"),
-            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER // Changed to center justify
         );
     }
 
@@ -188,8 +225,14 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
         var height = 12;
         var width = 18;
-        var x = screenWidth / 4 - width;
-        var y = screenHeight / 2 - height / 2 + 2;
+
+        // Coordinates for 2PM
+        var angle_deg = 60; // 2 PM on the clock in degrees
+        var angle_rad = angle_deg * (Math.PI / 180);
+        var radius = screenWidth / 4;
+
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad);
+        var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
 
         dc.setPenWidth(2);
         dc.setColor(
@@ -219,16 +262,17 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
             height
         );
 
-        // Draw the text
+        // Adjust text position
+        var text_x = x + width + 5; // Shift text 5 units to the right of the battery rectangle
+        var text_y = y + height / 2; // Align the text vertically centered to the battery rectangle
         dc.drawText(
-            x - 6,
-            screenHeight / 2,
+            text_x,
+            text_y,
             Graphics.FONT_SMALL,
             batteryText,
-            Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER
+            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER // Left justify and vertically center
         );
     }
-
     // Called when this View is removed from the screen. Save the
     // state of this View here. This includes freeing resources from
     // memory.
