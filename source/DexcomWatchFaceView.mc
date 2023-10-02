@@ -7,7 +7,6 @@ using Toybox.ActivityMonitor;
 using Toybox.Time.Gregorian as Date;
 
 class DexcomFaceWatchView extends WatchUi.WatchFace {
-    private var olafImage;
     private var screenWidth;
     private var screenHeight;
     private var hoursFont;
@@ -21,7 +20,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     function initialize() {
         WatchFace.initialize();
 
-        olafImage = Application.loadResource(Rez.Drawables.Olaf);
         hoursFont = Application.loadResource(Rez.Fonts.HoursFont);
         minutesFont = Application.loadResource(Rez.Fonts.MinutesFont);
         dateFont = Application.loadResource(Rez.Fonts.DateFont);
@@ -64,7 +62,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         View.onUpdate(dc);
 
         // Draw the UI
-        drawOlaf(dc);
         drawHoursMinutes(dc);
         drawSecondsText(dc, false);
         drawDate(dc);
@@ -83,21 +80,13 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         drawSecondsText(dc, true);
     }
 
-    private function drawOlaf(dc) {
-        dc.drawBitmap(
-            screenWidth / 2 - olafImage.getWidth() / 2,
-            screenHeight - olafImage.getHeight(),
-            olafImage
-        );
-    }
-
     private function drawHoursMinutes(dc) {
         var clockTime = System.getClockTime();
         var hours = clockTime.hour.format("%02d");
         var minutes = clockTime.min.format("%02d");
 
         var x = screenWidth / 2;
-        var y = screenHeight - olafImage.getHeight() - 20;
+        var y = screenHeight - 20;
 
         // Draw hours
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
@@ -130,7 +119,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
         var minutesWidth = 48; // dc.getTextWidthInPixels(minutes, minutesFont)
         var x = screenWidth / 2 + 2 + minutesWidth + 5; // Margin right 5px
-        var y = screenHeight - olafImage.getHeight() - 20 - 2; // Visual adjustment 2px
+        var y = screenHeight - 20 - 2; // Visual adjustment 2px
 
         if (isPartialUpdate) {
             dc.setClip(
