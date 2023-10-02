@@ -14,7 +14,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     private var minutesFont;
     private var dateFont;
     private var heart;
-    private var blinkingEyes;
     private var showSeconds = false;
     private var isLowPowerMode = false;
     private var isHidden = false;
@@ -46,7 +45,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         });
         addLayer(heart);
 
-        blinkingEyes = new BlinkingEyes(dc);
     }
 
     function pumpHeart() {
@@ -77,7 +75,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         if (!isLowPowerMode && !isHidden) {
             pumpHeart();
             if (System.getClockTime().sec % 15 == 0) {
-                blinkingEyes.blink();
             }
         }
     }
@@ -264,7 +261,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() as Void {
         isLowPowerMode = true;
-        blinkingEyes.stop();
         heart.stop();
     }
 
