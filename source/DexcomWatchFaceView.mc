@@ -74,13 +74,13 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
         var heartX = screenWidth / 2 + radius * Math.cos(angle_rad);
         var heartY = screenHeight / 2 - radius * Math.sin(angle_rad); 
-        var x = heartX + heartWidth + 15;
+        var x = heartX + heartWidth + 13;
         var y = heartY + 10;
         dc.drawText(
             x,
             y,
             Graphics.FONT_XTINY,
-            (heartRate == 0 || heartRate == null) ? "95" : heartRate.format("%d"),
+            (heartRate == 0 || heartRate == null) ? "195" : heartRate.format("%d"),
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER // Changed to center justify
         );
     }
@@ -109,6 +109,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         drawHeartRateText(dc);
         drawBattery(dc);
         drawBluetoothStatus(dc);
+        drawStepsText(dc);
 
         // Draw optional animations
         if (!isLowPowerMode && !isHidden) {
@@ -120,6 +121,43 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
     function onPartialUpdate(dc) {
         drawSecondsText(dc, true);
+    }
+
+    private function drawStepsText(dc) {
+        var info = Activity.getActivityInfo();
+        var history = ActivityMonitor.getHistory();
+        var steps = 0;
+        if (history != null) {
+            steps = 2;
+        } else {
+            var latestSteps = 2;
+            if (latestSteps != null) {
+                // steps = latestSteps.steps;
+            }
+        }
+        steps = 5002;
+        var stepsInK = steps / 1000.0;
+        var formattedSteps = stepsInK + "K steps";
+
+        dc.setColor(
+            steps > 10000 ? Graphics.COLOR_DK_GREEN : Graphics.COLOR_LT_GRAY,
+            Graphics.COLOR_TRANSPARENT
+        );
+
+        var angle_deg_foot = 165; // Similar to what we did for foot icon
+        var angle_rad_foot = angle_deg_foot * (Math.PI / 180);
+        var footWidth = 0;
+        var radius_foot = screenWidth / 2 - 20 - footWidth; // You'll need to get footWidth similar to heartWidth
+
+        var x = screenWidth / 2 + radius_foot * Math.cos(angle_rad_foot);
+        var y = screenHeight / 2 - radius_foot * Math.sin(angle_rad_foot);
+        dc.drawText(
+            x,
+            y,
+            Graphics.FONT_SMALL,
+            formattedSteps,
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+        );
     }
 
     private function drawHoursMinutes(dc) {
