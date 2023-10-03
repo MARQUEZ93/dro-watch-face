@@ -284,7 +284,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 4;
 
-        var x = screenWidth / 2 + radius * Math.cos(angle_rad);
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad) + 20;
         var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
 
         dc.setPenWidth(2);
@@ -336,8 +336,12 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         var statusText = isConnected ? "Connected" : "Disconnected \uF294"; // '\uF294' could be a Bluetooth symbol in some font libraries
         
         // Choose your x, y position for drawing
-        var x = 150; // Example: 10 units from the left edge
-        var y = 100; // Example: 10 units from the top edge
+        var angle_deg = 25; // 2:45 PM, symmetrical to 195 degrees for heart
+        var angle_rad = angle_deg * (Math.PI / 180);
+        var radius = screenWidth / 2 - 20;
+
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad) - 60;
+        var y = screenHeight / 2 - radius * Math.sin(angle_rad) + 10;
 
         // Set text color based on connection status
         dc.setColor(
@@ -352,18 +356,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
             statusText,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
         );
-    }
-    private function drawRing(dc) {
-        var centerX = screenWidth / 2;
-        var centerY = screenHeight / 2;
-        var radius = screenWidth / 2 - 5; // 5 pixels from the edge
-        var startAngle = 0;
-        var endAngle = 360;
-        var attr = Graphics.ARC_COUNTER_CLOCKWISE;
-
-        dc.setColor(Graphics.COLOR_PURPLE, Graphics.COLOR_TRANSPARENT);
-        dc.setPenWidth(6); // Adjust the thickness of the ring
-        dc.drawArc(centerX, centerY, radius, attr, startAngle, endAngle);
     }
     // Called when this View is removed from the screen. Save the
     // state of this View here. This includes freeing resources from
@@ -381,6 +373,19 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     function onEnterSleep() as Void {
         isLowPowerMode = true;
         heart.stop();
+    }
+
+    private function drawRing(dc) {
+        var centerX = screenWidth / 2;
+        var centerY = screenHeight / 2;
+        var radius = screenWidth / 2 - 5; // 5 pixels from the edge
+        var startAngle = 0;
+        var endAngle = 360;
+        var attr = Graphics.ARC_COUNTER_CLOCKWISE;
+
+        dc.setColor(Graphics.COLOR_PURPLE, Graphics.COLOR_TRANSPARENT);
+        dc.setPenWidth(6); // Adjust the thickness of the ring
+        dc.drawArc(centerX, centerY, radius, attr, startAngle, endAngle);
     }
 
 }
