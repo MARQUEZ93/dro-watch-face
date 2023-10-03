@@ -13,6 +13,9 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     private var showSeconds = false;
     private var isLowPowerMode = false;
     private var isHidden = false;
+    private var heartHeight = 0;
+    private var heartWidth = 0;
+
 
     function initialize() {
         WatchFace.initialize();
@@ -30,12 +33,56 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         screenHeight = dc.getHeight();
 
         var heartResource = WatchUi.loadResource(Rez.Drawables.Heart);
+        heartWidth = heartResource.getWidth();
+        heartHeight = heartResource.getHeight();
+        var angle_deg = 195; // 8:30 PM on the clock in degrees
+        var angle_rad = angle_deg * (Math.PI / 180);
+        var radius = screenWidth / 2 - 20; // 20 units away from the edge
+
+        var heartX = screenWidth / 2 + radius * Math.cos(angle_rad);
+        var heartY = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
+
         heart = new WatchUi.AnimationLayer(heartResource, {
-            :locX => screenWidth * 3 / 4,
-            :locY => (screenHeight - heartResource.getHeight()) / 2 + 2, // Visual adjustment
+            :locX => heartX,
+            :locY => heartY,
         });
         addLayer(heart);
+    }
 
+    private function drawHeartRateText(dc) {
+        var heartRate = 0;
+        
+        var info = Activity.getActivityInfo();
+        if (info != null) {
+            heartRate = info.currentHeartRate;
+        } else {
+            var latestHeartRateSample = ActivityMonitor.getHeartRateHistory(1, true).next();
+            if (latestHeartRateSample != null) {
+                heartRate = latestHeartRateSample.heartRate;
+            }
+        }
+
+        var heartResource = heart.getResource();
+
+        dc.setColor(
+            (heartRate != null && heartRate > 120) ? Graphics.COLOR_DK_RED : Graphics.COLOR_LT_GRAY,
+            Graphics.COLOR_TRANSPARENT
+        );
+        var angle_deg = 195; // 8:30 PM on the clock in degrees
+        var angle_rad = angle_deg * (Math.PI / 180);
+        var radius = screenWidth / 2 - 20; // 20 units away from the edge
+
+        var heartX = screenWidth / 2 + radius * Math.cos(angle_rad);
+        var heartY = screenHeight / 2 - radius * Math.sin(angle_rad); 
+        var x = heartX + heartWidth + 15;
+        var y = heartY + 10;
+        dc.drawText(
+            x,
+            y,
+            Graphics.FONT_XTINY,
+            (heartRate == 0 || heartRate == null) ? "95" : heartRate.format("%d"),
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER // Changed to center justify
+        );
     }
 
     function pumpHeart() {
@@ -57,7 +104,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         // Draw the UI
         drawRing(dc);
         drawHoursMinutes(dc);
-        drawSecondsText(dc, false);
+        // drawSecondsText(dc, false);
         drawDate(dc);
         drawHeartRateText(dc);
         drawBattery(dc);
@@ -187,39 +234,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         );
     }
 
-    private function drawHeartRateText(dc) {
-        var heartRate = 0;
-        
-        var info = Activity.getActivityInfo();
-        if (info != null) {
-            heartRate = info.currentHeartRate;
-        } else {
-            var latestHeartRateSample = ActivityMonitor.getHeartRateHistory(1, true).next();
-            if (latestHeartRateSample != null) {
-                heartRate = latestHeartRateSample.heartRate;
-            }
-        }
-
-        var heartResource = heart.getResource();
-
-        dc.setColor(
-            (heartRate != null && heartRate > 120) ? Graphics.COLOR_DK_RED : Graphics.COLOR_LT_GRAY,
-            Graphics.COLOR_TRANSPARENT
-        );
-        var angle_deg = 240; // 8 PM on the clock in degrees
-        var angle_rad = angle_deg * (Math.PI / 180);
-        var radius = screenWidth / 4; 
-        var x = screenWidth / 2 + radius * Math.cos(angle_rad);
-        var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
-    
-        dc.drawText(
-            x,
-            y,
-            Graphics.FONT_SMALL,
-            (heartRate == 0 || heartRate == null) ? "--" : heartRate.format("%d"),
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER // Changed to center justify
-        );
-    }
 
     private function drawBattery(dc) {
         var battery = System.getSystemStats().battery;
@@ -270,7 +284,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         dc.drawText(
             text_x,
             text_y,
-            Graphics.FONT_SMALL,
+            Graphics.FONT_XTINY,
             batteryText,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER // Left justify and vertically center
         );
