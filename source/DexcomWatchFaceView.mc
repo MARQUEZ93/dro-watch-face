@@ -55,11 +55,13 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         View.onUpdate(dc);
 
         // Draw the UI
+        drawRing(dc);
         drawHoursMinutes(dc);
         drawSecondsText(dc, false);
         drawDate(dc);
         drawHeartRateText(dc);
         drawBattery(dc);
+        drawBluetoothStatus(dc);
 
         // Draw optional animations
         if (!isLowPowerMode && !isHidden) {
@@ -272,6 +274,45 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
             batteryText,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER // Left justify and vertically center
         );
+    }
+    private function drawBluetoothStatus(dc) {
+        var deviceSettings = System.getDeviceSettings();
+        var bluetoothState = deviceSettings.connectionInfo[:bluetooth].state;
+    
+        // Check if connected
+        var isConnected = (bluetoothState == 2); // Or use the appropriate enum if available
+        
+        var statusText = isConnected ? "Connected" : "Disconnected \uF294"; // '\uF294' could be a Bluetooth symbol in some font libraries
+        
+        // Choose your x, y position for drawing
+        var x = 150; // Example: 10 units from the left edge
+        var y = 100; // Example: 10 units from the top edge
+
+        // Set text color based on connection status
+        dc.setColor(
+            isConnected ? Graphics.COLOR_GREEN : Graphics.COLOR_RED,
+            Graphics.COLOR_TRANSPARENT
+        );
+
+        dc.drawText(
+            x,
+            y,
+            Graphics.FONT_XTINY,
+            statusText,
+            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
+        );
+    }
+    private function drawRing(dc) {
+        var centerX = screenWidth / 2;
+        var centerY = screenHeight / 2;
+        var radius = screenWidth / 2 - 5; // 5 pixels from the edge
+        var startAngle = 0;
+        var endAngle = 360;
+        var attr = Graphics.ARC_COUNTER_CLOCKWISE;
+
+        dc.setColor(Graphics.COLOR_PURPLE, Graphics.COLOR_TRANSPARENT);
+        dc.setPenWidth(6); // Adjust the thickness of the ring
+        dc.drawArc(centerX, centerY, radius, attr, startAngle, endAngle);
     }
     // Called when this View is removed from the screen. Save the
     // state of this View here. This includes freeing resources from
