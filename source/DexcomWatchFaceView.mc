@@ -110,6 +110,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         drawBattery(dc);
         drawBluetoothStatus(dc);
         drawStepsText(dc);
+        drawTemperature(dc);
 
         // Draw optional animations
         if (!isLowPowerMode && !isHidden) {
@@ -155,6 +156,45 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
         );
     }
+
+    private function drawTemperature(dc) {
+        var temperature = 20; // Replace with the actual temperature
+        var tempString = temperature.format("%d");
+        var degreeSymbol = "°";
+
+        // Position at 10:30 on the clock
+        // Position at 10:30 on the clock
+        var angle_deg = 160; // 10:30 in degrees
+        var angle_rad = angle_deg * (Math.PI / 180);
+        var radius = screenWidth / 2 - 20; // 20 units away from the edge
+
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad);
+        var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
+
+        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+
+        // Draw the temperature number
+        dc.drawText(
+            x,
+            y,
+            Graphics.FONT_SMALL,
+            tempString,
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+        );
+
+        // Draw the degree symbol, with a manual offset
+        var xOffsetDegree = 12;  // Manual x offset for degree symbol
+        var yOffsetDegree = -4;  // Manual y offset for degree symbol
+        dc.drawText(
+            x + xOffsetDegree,
+            y + yOffsetDegree,
+            Graphics.FONT_TINY,
+            degreeSymbol,
+            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
+        );
+    }
+
+
 
 
 
