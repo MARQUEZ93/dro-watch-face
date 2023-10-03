@@ -177,45 +177,22 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
         var hoursString = hours.format("%d");
         var minutesString = clockTime.min.format("%02d");
+        var colonString = ":";
 
         var x = screenWidth / 2; // Centered horizontally
         var y = screenHeight / 2; // Centered vertically
 
-        // Draw hours
-        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            x - 2,
-            y,
-            Graphics.FONT_SMALL,
-            hoursString,
-            Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER
-        );
+        var fullTimeString = hoursString + colonString + minutesString + " " + am_pm;
 
-        // Draw the colon (optional)
+        dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+        
+        // Draw full time string (hours + colon + minutes + AM/PM) centered
         dc.drawText(
             x,
             y,
             Graphics.FONT_SMALL,
-            ":",
+            fullTimeString,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
-        );
-
-        // Draw minutes
-        dc.drawText(
-            x + 2,
-            y,
-            Graphics.FONT_SMALL,
-            minutesString,
-            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
-        );
-
-        // Draw AM/PM (optional)
-        dc.drawText(
-            x + 18,  // Adjusted for visual placement
-            y,
-            Graphics.FONT_SMALL,
-            am_pm,
-            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
         );
     }
 
@@ -317,7 +294,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
         // Adjust text position
         var text_x = x + width + 5; // Shift text 5 units to the right of the battery rectangle
-        var text_y = y + height / 2; // Align the text vertically centered to the battery rectangle
+        var text_y = y + height / 2 - 2; // Align the text vertically centered to the battery rectangle
         dc.drawText(
             text_x,
             text_y,
