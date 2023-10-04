@@ -4,6 +4,7 @@ import Toybox.WatchUi;
 
 class DexcomWatchFaceApp extends Application.AppBase {
     private var view;
+    private var stepsImage;
 
     function initialize() {
         AppBase.initialize();

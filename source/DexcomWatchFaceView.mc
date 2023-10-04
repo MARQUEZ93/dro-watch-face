@@ -18,9 +18,11 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     private var isHidden = false;
     private var heartHeight = 0;
     private var heartWidth = 0;
+    private var stepsImage;
 
     function initialize() {
         WatchFace.initialize();
+        stepsImage = Application.loadResource(Rez.Drawables.steps);
     }
 
     function onSettingsChanged() {
@@ -101,7 +103,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         drawHeartRateText(dc);
         drawBattery(dc);
         drawBluetoothStatus(dc);
-        drawStepsText(dc);
+        drawSteps(dc);
         drawTemperature(dc);
 
         // Draw optional animations
@@ -116,7 +118,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         drawSecondsText(dc, true);
     }
 
-    private function drawStepsText(dc) {
+    private function drawSteps(dc) {
         var steps = DataProvider.getSteps();
         var stepsInK = steps / 1000.0;
         var formattedSteps = stepsInK.format("%.1f") + "K";
@@ -133,8 +135,17 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         var x = screenWidth / 2 + radius * Math.cos(angle_rad) - 40;
         var y = screenHeight / 2 - radius * Math.sin(angle_rad) + 10;
 
+        var imgWidth = stepsImage.getWidth();
+        var imgHeight = stepsImage.getHeight();
+        // Draw the image to the left of the text
+        dc.drawBitmap(
+            x - imgWidth + 10, 
+            y - imgHeight / 2,
+            stepsImage
+        );
+
         dc.drawText(
-            x,
+            x + 25,
             y,
             Graphics.FONT_XTINY,
             formattedSteps,
