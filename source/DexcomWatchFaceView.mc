@@ -164,11 +164,11 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
         // Position at 10:30 on the clock
         // Position at 10:30 on the clock
-        var angle_deg = 160; // 10:30 in degrees
+        var angle_deg = 155; // 10:30 in degrees
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 2 - 20; // 20 units away from the edge
 
-        var x = screenWidth / 2 + radius * Math.cos(angle_rad);
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad) + 5;
         var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
 
         dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
@@ -401,7 +401,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         var attr = Graphics.ARC_COUNTER_CLOCKWISE;
 
         dc.setColor(Graphics.COLOR_PURPLE, Graphics.COLOR_TRANSPARENT);
-        dc.setPenWidth(6); // Adjust the thickness of the ring
+        dc.setPenWidth(4); // Adjust the thickness of the ring
         dc.drawArc(centerX, centerY, radius, attr, startAngle, endAngle);
     }
 
