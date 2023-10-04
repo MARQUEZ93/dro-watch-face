@@ -344,7 +344,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         // Draw the bluetooth to the right of the text
         dc.drawBitmap(
             x + 60, 
-            y + height / 2 - 15,
+            y + height / 2 - 13,
             bluetoothImg
         );
     }
