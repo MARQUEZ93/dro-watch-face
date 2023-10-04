@@ -1,4 +1,6 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="icons/launcher_icon.png" />
     <bitmap id="steps" filename="icons/steps.png"/>
+    <bitmap id="disconnected" filename="icons/bt-dis.png"/>
+    <bitmap id="connected" filename="icons/bt-conn.png"/>
 </drawables>

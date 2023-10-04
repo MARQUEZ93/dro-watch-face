@@ -19,10 +19,14 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     private var heartHeight = 0;
     private var heartWidth = 0;
     private var stepsImage;
+    private var connectedImage;
+    private var disconnectedImage;
 
     function initialize() {
         WatchFace.initialize();
         stepsImage = Application.loadResource(Rez.Drawables.steps);
+        disconnectedImage = Application.loadResource(Rez.Drawables.disconnected);
+        connectedImage = Application.loadResource(Rez.Drawables.connected);
     }
 
     function onSettingsChanged() {
@@ -101,8 +105,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         // drawSecondsText(dc, false);
         drawDate(dc);
         drawHeartRateText(dc);
-        drawBattery(dc);
-        drawBluetoothStatus(dc);
+        drawBatteryBluetooth(dc);
         drawSteps(dc);
         drawTemperature(dc);
 
@@ -280,19 +283,24 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     }
 
 
-    private function drawBattery(dc) {
+    private function drawBatteryBluetooth(dc) {
         var battery = DataProvider.getBatteryLevel();
         var batteryText = battery.format("%d") + "\u0025";
 
+        var bluetoothState = DataProvider.getBluetoothStatus();
+        // Check if connected
+        var isConnected = (bluetoothState == 2); // Or use the appropriate enum if available
+        var bluetoothImg = isConnected ? connectedImage : disconnectedImage; 
+
         var height = 12;
-        var width = 18;
+        var width = 24;
 
         // Coordinates for 2PM
         var angle_deg = 60; // 2 PM on the clock in degrees
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 4;
 
-        var x = screenWidth / 2 + radius * Math.cos(angle_rad) + 20;
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad) - 15;
         var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
 
         dc.setPenWidth(2);
@@ -333,14 +341,18 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
             batteryText,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER // Left justify and vertically center
         );
+        // Draw the bluetooth to the right of the text
+        dc.drawBitmap(
+            x + 60, 
+            y + height / 2 - 15,
+            bluetoothImg
+        );
     }
-    private function drawBluetoothStatus(dc) {
+    private function drawBluetooth(dc) {
         var bluetoothState = DataProvider.getBluetoothStatus();
     
         // Check if connected
         var isConnected = (bluetoothState == 2); // Or use the appropriate enum if available
-        
-        var statusText = isConnected ? "Connected" : "Disconnected \uF294"; // '\uF294' could be a Bluetooth symbol in some font libraries
         
         // Choose your x, y position for drawing
         var angle_deg = 25; // 2:45 PM, symmetrical to 195 degrees for heart
@@ -352,16 +364,18 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
         // Set text color based on connection status
         dc.setColor(
-            isConnected ? Graphics.COLOR_GREEN : Graphics.COLOR_RED,
+            isConnected ? Graphics.COLOR_BLUE : Graphics.COLOR_RED,
             Graphics.COLOR_TRANSPARENT
         );
+        var bluetoothImg = isConnected ? connectedImage : disconnectedImage; 
+        var imgWidth = bluetoothImg.getWidth();
+        var imgHeight = bluetoothImg.getHeight();
 
-        dc.drawText(
-            x,
-            y,
-            Graphics.FONT_XTINY,
-            statusText,
-            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
+        // Draw the image to the left of the text
+        dc.drawBitmap(
+            x + 20, 
+            y - imgHeight / 2 + 8,
+            bluetoothImg
         );
     }
     // Called when this View is removed from the screen. Save the
