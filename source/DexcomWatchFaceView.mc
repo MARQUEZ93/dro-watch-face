@@ -6,6 +6,9 @@ using Toybox.Activity;
 using Toybox.ActivityMonitor;
 using Toybox.Time.Gregorian as Date;
 
+// Import the DataProvider class
+using DataProvider;
+
 class DexcomFaceWatchView extends WatchUi.WatchFace {
     private var screenWidth;
     private var screenHeight;
@@ -15,7 +18,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     private var isHidden = false;
     private var heartHeight = 0;
     private var heartWidth = 0;
-
 
     function initialize() {
         WatchFace.initialize();
@@ -50,17 +52,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     }
 
     private function drawHeartRateText(dc) {
-        var heartRate = 0;
-        
-        var info = Activity.getActivityInfo();
-        if (info != null) {
-            heartRate = info.currentHeartRate;
-        } else {
-            var latestHeartRateSample = ActivityMonitor.getHeartRateHistory(1, true).next();
-            if (latestHeartRateSample != null) {
-                heartRate = latestHeartRateSample.heartRate;
-            }
-        }
+        var heartRate = DataProvider.getHeartRate();
 
         var heartResource = heart.getResource();
 
@@ -115,7 +107,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         // Draw optional animations
         if (!isLowPowerMode && !isHidden) {
             pumpHeart();
-            if (System.getClockTime().sec % 15 == 0) {
+            if (DataProvider.getCurrentTime().sec % 15 == 0) {
             }
         }
     }
@@ -125,16 +117,9 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     }
 
     private function drawStepsText(dc) {
-        var info = ActivityMonitor.getInfo();
-        var formattedSteps = "0K";  // Default value
-        var steps = 0;
-        if (info) {
-            if (info.steps != null) {
-                steps = info.steps;
-                var stepsInK = steps / 1000.0;
-                formattedSteps = stepsInK.format("%.1f") + "K";
-            }
-        }
+        var steps = DataProvider.getSteps();
+        var stepsInK = steps / 1000.0;
+        var formattedSteps = stepsInK.format("%.1f") + "K";
 
         dc.setColor(
             steps > 10000 ? Graphics.COLOR_DK_GREEN : Graphics.COLOR_LT_GRAY,
@@ -194,13 +179,8 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         );
     }
 
-
-
-
-
-
     private function drawHoursMinutes(dc) {
-        var clockTime = System.getClockTime();
+        var clockTime = DataProvider.getCurrentTime();
         var hours = clockTime.hour;
         var am_pm = "AM";
 
@@ -242,7 +222,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
             return;
         }
 
-        var clockTime = System.getClockTime();
+        var clockTime = DataProvider.getCurrentTime();
         var minutes = clockTime.min.format("%02d");
         var seconds = clockTime.sec.format("%02d");
 
@@ -290,7 +270,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
 
     private function drawBattery(dc) {
-        var battery = System.getSystemStats().battery;
+        var battery = DataProvider.getBatteryLevel();
         var batteryText = battery.format("%d") + "\u0025";
 
         var height = 12;
@@ -344,8 +324,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         );
     }
     private function drawBluetoothStatus(dc) {
-        var deviceSettings = System.getDeviceSettings();
-        var bluetoothState = deviceSettings.connectionInfo[:bluetooth].state;
+        var bluetoothState = DataProvider.getBluetoothStatus();
     
         // Check if connected
         var isConnected = (bluetoothState == 2); // Or use the appropriate enum if available
