@@ -3,6 +3,7 @@ using Toybox.ActivityMonitor;
 using Toybox.System;
 using Toybox.Time.Gregorian as Date;
 using Toybox.Time as Time;
+using Toybox.Weather as Weather;
 
 module DataProvider {
     function getHeartRate() {
@@ -46,8 +47,18 @@ module DataProvider {
     }
 
     function getTemperature() {
-        // You'll have to implement this with your specific logic
-        // For now, returning a dummy value
-        return 20;
+        var conditions = Weather.getCurrentConditions();
+        if (conditions != null) {
+            return conditions.temperature;
+        }
+        return null;  // Or some default value
+    }
+
+    function getForecast() {
+        var conditions = Weather.getCurrentConditions();
+        if (conditions != null) {
+            return conditions.condition;
+        }
+        return null;  // Or some default value like Weather.CONDITION_UNKNOWN
     }
 }

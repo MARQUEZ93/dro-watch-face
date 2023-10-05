@@ -142,7 +142,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         var imgHeight = stepsImage.getHeight();
         // Draw the image to the left of the text
         dc.drawBitmap(
-            x - imgWidth + 10, 
+            x - imgWidth + 5, 
             y - imgHeight / 2,
             stepsImage
         );

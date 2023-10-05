@@ -3,4 +3,10 @@
     <bitmap id="steps" filename="icons/steps.png"/>
     <bitmap id="disconnected" filename="icons/bt-dis.png"/>
     <bitmap id="connected" filename="icons/bt-conn.png"/>
+    <bitmap id="sunny" filename="icons/sunny.png"/>
+    <bitmap id="rainy" filename="icons/night.png"/>
+    <bitmap id="thunder" filename="icons/thunder.png"/>
+    <bitmap id="night" filename="icons/night.png"/>
+    <bitmap id="cloudy" filename="icons/cloudy.png"/>
+    <bitmap id="snowy" filename="icons/snowy.png"/>
 </drawables>
