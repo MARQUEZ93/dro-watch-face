@@ -22,11 +22,25 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     private var connectedImage;
     private var disconnectedImage;
 
+    private var sunnyImage;
+    private var rainyImage;
+    private var snowyImage;
+    private var nightImage;
+    private var cloudyImage;
+    private var thunderImage;
+
+
     function initialize() {
         WatchFace.initialize();
         stepsImage = Application.loadResource(Rez.Drawables.steps);
         disconnectedImage = Application.loadResource(Rez.Drawables.disconnected);
         connectedImage = Application.loadResource(Rez.Drawables.connected);
+        sunnyImage = Application.loadResource(Rez.Drawables.sunny);
+        rainyImage = Application.loadResource(Rez.Drawables.rainy);
+        snowyImage = Application.loadResource(Rez.Drawables.snowy);
+        nightImage = Application.loadResource(Rez.Drawables.night);
+        cloudyImage = Application.loadResource(Rez.Drawables.cloudy);
+        thunderImage = Application.loadResource(Rez.Drawables.thunder);
     }
 
     function onSettingsChanged() {
@@ -108,6 +122,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         drawBatteryBluetooth(dc);
         drawSteps(dc);
         drawTemperature(dc);
+        drawWeather(dc);
 
         // Draw optional animations
         if (!isLowPowerMode && !isHidden) {
@@ -157,9 +172,9 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     }
 
     private function drawTemperature(dc) {
-        var temperature = 20; // Replace with the actual temperature
-        var tempString = temperature.format("%d");
-        var degreeSymbol = "°";
+        var temperature = DataProvider.getTemperature();
+        var tempString = (temperature == null) ? "N/A" : temperature.format("%d");
+        var degreeSymbol = (temperature == null) ? "" : "°";
 
         // Position at 10:30 on the clock
         // Position at 10:30 on the clock
@@ -171,25 +186,118 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
 
         dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-
-        // Draw the temperature number
-        dc.drawText(
-            x,
-            y,
-            Graphics.FONT_SMALL,
-            tempString,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
-        );
+        if (temperature == null){
+            // Draw the temperature number
+            dc.drawText(
+                x,
+                y,
+                Graphics.FONT_XTINY,
+                tempString,
+                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+            );
+        }
 
         // Draw the degree symbol, with a manual offset
-        var xOffsetDegree = 12;  // Manual x offset for degree symbol
-        var yOffsetDegree = -4;  // Manual y offset for degree symbol
-        dc.drawText(
-            x + xOffsetDegree,
-            y + yOffsetDegree,
-            Graphics.FONT_TINY,
-            degreeSymbol,
-            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
+        if (temperature != null) {
+            dc.drawText(
+                x,
+                y,
+                Graphics.FONT_SMALL,
+                tempString,
+                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+            );
+            var xOffsetDegree = 12;  // Manual x offset for degree symbol
+            var yOffsetDegree = -4;  // Manual y offset for degree symbol
+            dc.drawText(
+                x + xOffsetDegree,
+                y + yOffsetDegree,
+                Graphics.FONT_TINY,
+                degreeSymbol,
+                Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER
+            );
+        }
+    }
+
+    private function drawWeather(dc) {
+        var weatherCondition = DataProvider.getForecast();
+
+        if (weatherCondition == null) {
+            return;
+        }
+
+        var weatherImage;
+
+        // Assume weatherCondition is a number based on Garmin's API
+        switch(weatherCondition) {
+            // Clear conditions
+            case 0:  // CONDITION_CLEAR
+            case 22: // CONDITION_PARTLY_CLEAR
+            case 23: // CONDITION_MOSTLY_CLEAR
+            case 40: // CONDITION_FAIR
+                weatherImage = sunnyImage;
+                break;
+
+            // Cloudy conditions
+            case 1:  // CONDITION_PARTLY_CLOUDY
+            case 2:  // CONDITION_MOSTLY_CLOUDY
+            case 20: // CONDITION_CLOUDY
+            case 52: // CONDITION_THIN_CLOUDS
+                weatherImage = cloudyImage;
+                break;
+
+            // Rainy conditions
+            case 3:  // CONDITION_RAIN
+            case 14: // CONDITION_LIGHT_RAIN
+            case 15: // CONDITION_HEAVY_RAIN
+            case 25: // CONDITION_SHOWERS
+            case 26: // CONDITION_HEAVY_SHOWERS
+            case 27: // CONDITION_CHANCE_OF_SHOWERS
+            case 45: // CONDITION_CLOUDY_CHANCE_OF_RAIN
+                weatherImage = rainyImage;
+                break;
+
+            // Snowy conditions
+            case 4:  // CONDITION_SNOW
+            case 16: // CONDITION_LIGHT_SNOW
+            case 17: // CONDITION_HEAVY_SNOW
+            case 43: // CONDITION_CHANCE_OF_SNOW
+            case 46: // CONDITION_CLOUDY_CHANCE_OF_SNOW
+            case 48: // CONDITION_FLURRIES
+                weatherImage = snowyImage;
+                break;
+
+            // Thunderstorm conditions
+            case 6:  // CONDITION_THUNDERSTORMS
+            case 12: // CONDITION_SCATTERED_THUNDERSTORMS
+            case 28: // CONDITION_CHANCE_OF_THUNDERSTORMS
+                weatherImage = thunderImage;
+                break;
+
+            // Night conditions (This is tricky since "Night" is a time rather than a weather condition)
+            // For now, no mapping.
+
+            // Unhandled cases
+            default:
+                weatherImage = sunnyImage;
+                break;
+        }
+
+        var imgWidth = weatherImage.getWidth();
+        var imgHeight = weatherImage.getHeight();
+
+        // Using the same positioning as in drawTemperature
+        var angle_deg = 155; // 10:30 in degrees
+        var angle_rad = angle_deg * (Math.PI / 180);
+        var radius = screenWidth / 2 - 20; // 20 units away from the edge
+
+        // Adjust the x-coordinate to place the weather image to the left of the temperature
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad) - imgWidth - 20; // Subtracting the image width and some margin
+        var y = screenHeight / 2 - radius * Math.sin(angle_rad);
+
+        dc.drawBitmap(
+            100,
+            100,
+            weatherImage
         );
     }
 

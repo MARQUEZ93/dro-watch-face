@@ -51,7 +51,7 @@ module DataProvider {
         if (conditions != null) {
             return conditions.temperature;
         }
-        return null;  // Or some default value
+        return null; 
     }
 
     function getForecast() {
@@ -59,6 +59,6 @@ module DataProvider {
         if (conditions != null) {
             return conditions.condition;
         }
-        return null;  // Or some default value like Weather.CONDITION_UNKNOWN
+        return null; 
     }
 }
