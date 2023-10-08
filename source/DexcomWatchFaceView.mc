@@ -86,6 +86,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
         var heartX = screenWidth / 2 + radius * Math.cos(angle_rad);
         var heartY = screenHeight / 2 - radius * Math.sin(angle_rad); 
+
         var x = heartX + heartWidth + 13;
         var y = heartY + 10;
         dc.drawText(
@@ -177,12 +178,11 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         var degreeSymbol = (temperature == null) ? "" : "°";
 
         // Position at 10:30 on the clock
-        // Position at 10:30 on the clock
         var angle_deg = 155; // 10:30 in degrees
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 2 - 20; // 20 units away from the edge
 
-        var x = screenWidth / 2 + radius * Math.cos(angle_rad) + 5;
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad) + 45;
         var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
 
         dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
@@ -201,13 +201,13 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         if (temperature != null) {
             dc.drawText(
                 x,
-                y,
+                y - 5,
                 Graphics.FONT_SMALL,
                 tempString,
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
             );
-            var xOffsetDegree = 12;  // Manual x offset for degree symbol
-            var yOffsetDegree = -4;  // Manual y offset for degree symbol
+            var xOffsetDegree = 12;
+            var yOffsetDegree = -5;
             dc.drawText(
                 x + xOffsetDegree,
                 y + yOffsetDegree,
@@ -285,18 +285,16 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         var imgWidth = weatherImage.getWidth();
         var imgHeight = weatherImage.getHeight();
 
-        // Using the same positioning as in drawTemperature
-        var angle_deg = 155; // 10:30 in degrees
+        var angle_deg = 155;
         var angle_rad = angle_deg * (Math.PI / 180);
-        var radius = screenWidth / 2 - 20; // 20 units away from the edge
+        var radius = screenWidth / 2 - 20;
 
-        // Adjust the x-coordinate to place the weather image to the left of the temperature
-        var x = screenWidth / 2 + radius * Math.cos(angle_rad) - imgWidth - 20; // Subtracting the image width and some margin
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad); // Adjusted x-coordinate
         var y = screenHeight / 2 - radius * Math.sin(angle_rad);
 
         dc.drawBitmap(
-            100,
-            100,
+            x,  // Changed from fixed 100 to calculated x
+            y - imgHeight / 2 - 5,  // Adjusted y to vertically center the image
             weatherImage
         );
     }
