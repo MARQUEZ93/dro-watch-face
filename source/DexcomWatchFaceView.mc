@@ -22,6 +22,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
     private var connectedImage;
     private var disconnectedImage;
 
+    private var heartImage;
     private var sunnyImage;
     private var rainyImage;
     private var snowyImage;
@@ -41,6 +42,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         nightImage = Application.loadResource(Rez.Drawables.night);
         cloudyImage = Application.loadResource(Rez.Drawables.cloudy);
         thunderImage = Application.loadResource(Rez.Drawables.thunder);
+        heartImage = Application.loadResource(Rez.Drawables.heart);
     }
 
     function onSettingsChanged() {
@@ -53,10 +55,11 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
 
         screenWidth = dc.getWidth();
         screenHeight = dc.getHeight();
+    }
 
-        var heartResource = WatchUi.loadResource(Rez.Drawables.Heart);
-        heartWidth = heartResource.getWidth();
-        heartHeight = heartResource.getHeight();
+    private function drawHeartRateText(dc) {
+        heartWidth = heartImage.getWidth();
+        heartHeight = heartImage.getHeight();
         var angle_deg = 195; // 8:30 PM on the clock in degrees
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 2 - 20; // 20 units away from the edge
@@ -64,17 +67,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         var heartX = screenWidth / 2 + radius * Math.cos(angle_rad);
         var heartY = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
 
-        heart = new WatchUi.AnimationLayer(heartResource, {
-            :locX => heartX,
-            :locY => heartY,
-        });
-        addLayer(heart);
-    }
-
-    private function drawHeartRateText(dc) {
         var heartRate = DataProvider.getHeartRate();
-
-        var heartResource = heart.getResource();
 
         dc.setColor(
             (heartRate != null && heartRate > 120) ? Graphics.COLOR_DK_RED : Graphics.COLOR_LT_GRAY,
@@ -84,11 +77,13 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 2 - 20; // 20 units away from the edge
 
-        var heartX = screenWidth / 2 + radius * Math.cos(angle_rad);
-        var heartY = screenHeight / 2 - radius * Math.sin(angle_rad); 
-
         var x = heartX + heartWidth + 13;
         var y = heartY + 10;
+         dc.drawBitmap(
+            heartX,
+            heartY,
+            heartImage 
+        );
         dc.drawText(
             x,
             y,
@@ -96,10 +91,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
             (heartRate == 0 || heartRate == null) ? "195" : heartRate.format("%d"),
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER // Changed to center justify
         );
-    }
-
-    function pumpHeart() {
-        heart.play(null);
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -125,12 +116,6 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         drawTemperature(dc);
         drawWeather(dc);
 
-        // Draw optional animations
-        if (!isLowPowerMode && !isHidden) {
-            pumpHeart();
-            if (DataProvider.getCurrentTime().sec % 15 == 0) {
-            }
-        }
     }
 
     function onPartialUpdate(dc) {
@@ -320,7 +305,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         var colonString = ":";
 
         var x = screenWidth / 2; // Centered horizontally
-        var y = screenHeight / 2; // Centered vertically
+        var y = screenHeight / 2 - 10; // Centered vertically
 
         var fullTimeString = hoursString + colonString + minutesString + " " + am_pm;
 
@@ -330,7 +315,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         dc.drawText(
             x,
             y,
-            Graphics.FONT_SMALL,
+            Graphics.FONT_MEDIUM,
             fullTimeString,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
         );
