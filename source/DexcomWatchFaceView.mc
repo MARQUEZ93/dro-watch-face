@@ -73,11 +73,8 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
             (heartRate != null && heartRate > 120) ? Graphics.COLOR_DK_RED : Graphics.COLOR_LT_GRAY,
             Graphics.COLOR_TRANSPARENT
         );
-        var angle_deg = 195; // 8:30 PM on the clock in degrees
-        var angle_rad = angle_deg * (Math.PI / 180);
-        var radius = screenWidth / 2 - 20; // 20 units away from the edge
 
-        var x = heartX + heartWidth + 13;
+        var x = heartX + heartWidth + 18;
         var y = heartY + 10;
          dc.drawBitmap(
             heartX,
@@ -366,7 +363,7 @@ class DexcomFaceWatchView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             screenWidth / 2,
-            30,
+            35,
             Graphics.FONT_SMALL,
             dateString,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER

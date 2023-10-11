@@ -49,7 +49,9 @@ module DataProvider {
     function getTemperature() {
         var conditions = Weather.getCurrentConditions();
         if (conditions != null) {
-            return conditions.temperature;
+            var tempCelsius = conditions.temperature;
+            var tempFahrenheit = (tempCelsius * 9/5) + 32;
+            return tempFahrenheit;
         }
         return null; 
     }
