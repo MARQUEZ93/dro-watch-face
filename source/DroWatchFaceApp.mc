@@ -2,7 +2,7 @@ import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-class DexcomWatchFaceApp extends Application.AppBase {
+class DroWatchFaceApp extends Application.AppBase {
     private var view;
     private var stepsImage;
 
@@ -25,13 +25,13 @@ class DexcomWatchFaceApp extends Application.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() as Array<Views or InputDelegates>? {
-        view = new DexcomFaceWatchView();
+        view = new DroFaceWatchView();
         onSettingsChanged();
         return [ view ] as Array<Views or InputDelegates>;
     }
 
 }
 
-function getApp() as DexcomWatchFaceApp {
-    return Application.getApp() as DexcomWatchFaceApp;
+function getApp() as DroWatchFaceApp {
+    return Application.getApp() as DroWatchFaceApp;
 }

@@ -9,7 +9,7 @@ using Toybox.Time.Gregorian as Date;
 // Import the DataProvider class
 using DataProvider;
 
-class DexcomFaceWatchView extends WatchUi.WatchFace {
+class DroFaceWatchView extends WatchUi.WatchFace {
     private var screenWidth;
     private var screenHeight;
     private var heart;

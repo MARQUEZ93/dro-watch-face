@@ -1,13 +1,16 @@
-# Dexcom Garmin Watch Face
+# The Dro Garmin Watch Face
 
----
+--- Only for the Garmin Forerunner 255 (and Music too)
 
 ## Features
-- 🩸 [Dexcom Data Field](https://www.youtube.com/watch?v=ft0Y9ImIE4Q)
 - 🕚 Time (Hours/Minutes/Optional Seconds)
 - 📅 Date (Week day/Month/Day)
 - 🔋 Battery
 - 💗 Heart Rate
+- 💗 Stop Watch or Timer
+- 💗 Weather
+- Bluetooth Connection Status
+
 
 ## Credits
 
