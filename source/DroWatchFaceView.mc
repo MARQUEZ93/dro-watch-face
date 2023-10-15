@@ -12,12 +12,9 @@ using DataProvider;
 class DroFaceWatchView extends WatchUi.WatchFace {
     private var screenWidth;
     private var screenHeight;
-    private var heart;
     private var showSeconds = false;
     private var isLowPowerMode = false;
     private var isHidden = false;
-    private var heartHeight = 0;
-    private var heartWidth = 0;
     private var stepsImage;
     private var connectedImage;
     private var disconnectedImage;
@@ -58,8 +55,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
     }
 
     private function drawHeartRateText(dc) {
-        heartWidth = heartImage.getWidth();
-        heartHeight = heartImage.getHeight();
         var angle_deg = 195; // 8:30 PM on the clock in degrees
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 2 - 20; // 20 units away from the edge
@@ -112,7 +107,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         drawSteps(dc);
         drawTemperature(dc);
         drawWeather(dc);
-        drawStopwatchOrTimer(dc);
+        drawTimer(dc);
     }
 
     function onPartialUpdate(dc) {
@@ -482,7 +477,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() as Void {
         isLowPowerMode = true;
-        heart.stop();
     }
 
     private function drawRing(dc) {
