@@ -26,7 +26,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
     private var sunnyImage;
     private var rainyImage;
     private var snowyImage;
-    private var nightImage;
     private var cloudyImage;
     private var thunderImage;
     private var timerImage;
@@ -40,7 +39,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         sunnyImage = Application.loadResource(Rez.Drawables.sunny);
         rainyImage = Application.loadResource(Rez.Drawables.rainy);
         snowyImage = Application.loadResource(Rez.Drawables.snowy);
-        nightImage = Application.loadResource(Rez.Drawables.night);
         cloudyImage = Application.loadResource(Rez.Drawables.cloudy);
         thunderImage = Application.loadResource(Rez.Drawables.thunder);
         heartImage = Application.loadResource(Rez.Drawables.heart);
@@ -114,7 +112,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         drawSteps(dc);
         drawTemperature(dc);
         drawWeather(dc);
-        // drawStopwatchOrTimer(dc);
+        drawStopwatchOrTimer(dc);
     }
 
     function onPartialUpdate(dc) {
@@ -257,17 +255,10 @@ class DroFaceWatchView extends WatchUi.WatchFace {
                 weatherImage = thunderImage;
                 break;
 
-            // Night conditions (This is tricky since "Night" is a time rather than a weather condition)
-            // For now, no mapping.
-
             // Unhandled cases
             default:
                 weatherImage = sunnyImage;
                 break;
-        }
-
-        if isNightAndNoPrecipitation() != null {
-            weatherImage = nightImage;
         }
 
         var imgWidth = weatherImage.getWidth();
@@ -441,7 +432,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         );
         // Draw the bluetooth to the right of the text
         dc.drawBitmap(
-            x + 60, 
+            x + 60 - add100EdgeCase, 
             y + height / 2 - 13,
             bluetoothImg
         );
@@ -503,26 +494,65 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         var attr = Graphics.ARC_COUNTER_CLOCKWISE;
 
         dc.setColor(Graphics.COLOR_PURPLE, Graphics.COLOR_TRANSPARENT);
-        dc.setPenWidth(4); // Adjust the thickness of the ring
+        dc.setPenWidth(6); // Adjust the thickness of the ring
         dc.drawArc(centerX, centerY, radius, attr, startAngle, endAngle);
     }
 
-    // private function drawStopwatchOrTimer(dc) {
-    //     // Get the status from DataProvider
-    //     var status = DataProvider.getStopwatchOrTimerStatus();
+    private function drawTimer(dc) {
+        var status = DataProvider.getTimerTime();
+        if (status == null) {
+            return;
+        }
 
-    //     if (status == null || !status) {
-    //         return;
-    //     }
+        // Normalize to seconds
+        var totalSeconds = status / 1000;
 
-    //     var x = screenWidth / 2;
-    //     var y = screenHeight / 2;
+        // Calculate hours, minutes and seconds
+        var hours = (totalSeconds / 3600);
+        var minutes = ((totalSeconds % 3600) / 60);
+        var seconds = (totalSeconds % 60);
 
-    //     // Draw the image
-    //     dc.drawBitmap(
-    //         x - imageToDraw.getWidth() / 2, 
-    //         y - imageToDraw.getHeight() / 2,
-    //         timerImage
-    //     );
-    // }
+        // Manually zero-pad numbers and format as "hh:mm:ss"
+        var timeStr = "";
+        if (hours < 10) {
+            timeStr += "0";
+        }
+        timeStr += hours.toString() + ":";
+
+        if (minutes < 10) {
+            timeStr += "0";
+        }
+        timeStr += minutes.toString() + ":";  // Add minutes and the colon here
+
+        if (seconds < 10) {
+            timeStr += "0";
+        }
+        timeStr += seconds.toString();  // Finally add seconds
+        
+        var x = screenWidth / 2 - 20; // Centered horizontally
+        
+        // Move the timer up and to the right
+        var y = (screenHeight / 2) + (screenHeight / 4) + 20;  // moved up by reducing the offset
+        var xOffset = 30;  // added an x offset to move to the right
+        
+        // Draw the image
+        dc.drawBitmap(
+            x - timerImage.getWidth() / 2 - 10,
+            y - timerImage.getHeight() / 2,  // moved up
+            timerImage
+        );
+        
+        // Draw the time text to the right of the image
+        var textX = (x + timerImage.getWidth() / 2) + xOffset + 20;  // moved to the right
+        var textY = y;
+        
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);  // Assuming text color as white
+        dc.drawText(
+            textX, 
+            textY, 
+            Graphics.FONT_XTINY,  // Use appropriate font
+            timeStr,  // The corrected stopwatch or timer time
+            Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER
+        );
+    }
 }

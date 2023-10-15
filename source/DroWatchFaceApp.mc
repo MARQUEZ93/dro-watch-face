@@ -4,7 +4,6 @@ import Toybox.WatchUi;
 
 class DroWatchFaceApp extends Application.AppBase {
     private var view;
-    private var stepsImage;
 
     function initialize() {
         AppBase.initialize();

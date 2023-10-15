@@ -7,7 +7,7 @@
 - 📅 Date (Week day/Month/Day)
 - 🔋 Battery
 - 💗 Heart Rate
-- ⏲️⏱️ Time or Stop Watch
+- ⏱️ Stop Watch or Timer (StopWatch takes precedence if both are on)
 - 🌦️ Weather
 - 📶 Bluetooth Connection Status
 
