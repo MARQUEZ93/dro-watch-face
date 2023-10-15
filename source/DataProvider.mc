@@ -66,9 +66,9 @@ module DataProvider {
         return null; 
     }
     function getTimerTime() {
-        var info = Activity.getActivityInfo();
-        if (info != null) {
-            return info.timerTime;
+        var system = Toybox.System;
+        if (system != null) {
+            return system.getTimer();
         }
         return null;
     }

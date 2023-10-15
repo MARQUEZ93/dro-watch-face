@@ -12,9 +12,7 @@ using DataProvider;
 class DroFaceWatchView extends WatchUi.WatchFace {
     private var screenWidth;
     private var screenHeight;
-    private var showSeconds = false;
-    private var isLowPowerMode = false;
-    private var isHidden = false;
+    private var heartWidth = 0;
     private var stepsImage;
     private var connectedImage;
     private var disconnectedImage;
@@ -26,7 +24,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
     private var cloudyImage;
     private var thunderImage;
     private var timerImage;
-
 
     function initialize() {
         WatchFace.initialize();
@@ -42,10 +39,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         timerImage = Application.loadResource(Rez.Drawables.timer);
     }
 
-    function onSettingsChanged() {
-        showSeconds = Application.Properties.getValue("showSeconds");
-    }
-
     // Load your resources here
     function onLayout(dc) as Void {
         setLayout(Rez.Layouts.WatchFace(dc));
@@ -55,6 +48,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
     }
 
     private function drawHeartRateText(dc) {
+        heartWidth = heartImage.getWidth();
         var angle_deg = 195; // 8:30 PM on the clock in degrees
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 2 - 20; // 20 units away from the edge
@@ -85,13 +79,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         );
     }
 
-    // Called when this View is brought to the foreground. Restore
-    // the state of this View and prepare it to be shown. This includes
-    // loading resources into memory.
-    function onShow() as Void {
-        isHidden = false;
-    }
-
     // Update the view
     function onUpdate(dc) as Void {
         // Call the parent onUpdate function to redraw the layout
@@ -100,18 +87,13 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         // Draw the UI
         drawRing(dc);
         drawHoursMinutes(dc);
-        // drawSecondsText(dc, false);
         drawDate(dc);
         drawHeartRateText(dc);
         drawBatteryBluetooth(dc);
         drawSteps(dc);
         drawTemperature(dc);
         drawWeather(dc);
-        drawTimer(dc);
-    }
-
-    function onPartialUpdate(dc) {
-        drawSecondsText(dc, true);
+        // drawTimer(dc);
     }
 
     private function drawSteps(dc) {
@@ -256,7 +238,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
                 break;
         }
 
-        var imgWidth = weatherImage.getWidth();
         var imgHeight = weatherImage.getHeight();
 
         var angle_deg = 155;
@@ -307,43 +288,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
             Graphics.FONT_MEDIUM,
             fullTimeString,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
-        );
-    }
-
-
-    private function drawSecondsText(dc, isPartialUpdate) {
-        if (!showSeconds || isHidden) {
-            return;
-        }
-
-        var clockTime = DataProvider.getCurrentTime();
-        var minutes = clockTime.min.format("%02d");
-        var seconds = clockTime.sec.format("%02d");
-
-        var minutesWidth = 48; // dc.getTextWidthInPixels(minutes, minutesFont)
-        var x = screenWidth / 2 + 2 + minutesWidth + 5; // Margin right 5px
-        var y = screenHeight - 20 - 2; // Visual adjustment 2px
-
-        if (isPartialUpdate) {
-            dc.setClip(
-                x,
-                y + 5, // Adjust for text justification 5px
-                18, // dc.getTextWidthInPixels(seconds, dateFont)
-                15 // Fixed height 15px
-            );
-            // Use the background color to force repaint the clip
-            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_BLACK);
-            dc.clear();
-        } else {
-            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-        }
-
-        dc.drawText(
-            x,
-            y,
-            Graphics.FONT_SMALL,
-            seconds,
-            Graphics.TEXT_JUSTIFY_LEFT
         );
     }
 
@@ -452,7 +396,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
             Graphics.COLOR_TRANSPARENT
         );
         var bluetoothImg = isConnected ? connectedImage : disconnectedImage; 
-        var imgWidth = bluetoothImg.getWidth();
         var imgHeight = bluetoothImg.getHeight();
 
         // Draw the image to the left of the text
@@ -461,22 +404,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
             y - imgHeight / 2 + 8,
             bluetoothImg
         );
-    }
-    // Called when this View is removed from the screen. Save the
-    // state of this View here. This includes freeing resources from
-    // memory.
-    function onHide() as Void {
-        isHidden = true;
-    }
-
-    // The user has just looked at their watch. Timers and animations may be started here.
-    function onExitSleep() as Void {
-        isLowPowerMode = false;
-    }
-
-    // Terminate any active timers and prepare for slow updates.
-    function onEnterSleep() as Void {
-        isLowPowerMode = true;
     }
 
     private function drawRing(dc) {
@@ -492,61 +419,67 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         dc.drawArc(centerX, centerY, radius, attr, startAngle, endAngle);
     }
 
-    private function drawTimer(dc) {
-        var status = DataProvider.getTimerTime();
-        if (status == null) {
-            return;
-        }
+    // private function drawTimer(dc) {
+    //     var status = DataProvider.getTimerTime();
+    //     if (status == null) {
+    //         return;
+    //     }
 
-        // Normalize to seconds
-        var totalSeconds = status / 1000;
+    //     // Normalize to seconds
+    //     var totalSeconds = status / 1000;
 
-        // Calculate hours, minutes and seconds
-        var hours = (totalSeconds / 3600);
-        var minutes = ((totalSeconds % 3600) / 60);
-        var seconds = (totalSeconds % 60);
+    //     // Calculate hours, minutes and seconds
+    //     var hours = (totalSeconds / 3600);
+    //     var minutes = ((totalSeconds % 3600) / 60);
+    //     var seconds = (totalSeconds % 60);
 
-        // Manually zero-pad numbers and format as "hh:mm:ss"
-        var timeStr = "";
-        if (hours < 10) {
-            timeStr += "0";
-        }
-        timeStr += hours.toString() + ":";
+    //     // Manually zero-pad numbers and format as "hh:mm:ss"
+    //     var timeStr = "";
+    //     if (hours < 10) {
+    //         timeStr += "0";
+    //     }
+    //     timeStr += hours.toString() + ":";
 
-        if (minutes < 10) {
-            timeStr += "0";
-        }
-        timeStr += minutes.toString() + ":";  // Add minutes and the colon here
+    //     if (minutes < 10) {
+    //         timeStr += "0";
+    //     }
+    //     timeStr += minutes.toString() + ":";  // Add minutes and the colon here
 
-        if (seconds < 10) {
-            timeStr += "0";
-        }
-        timeStr += seconds.toString();  // Finally add seconds
+    //     if (seconds < 10) {
+    //         timeStr += "0";
+    //     }
+    //     timeStr += seconds.toString();  // Finally add seconds
         
-        var x = screenWidth / 2 - 20; // Centered horizontally
+    //     var x = screenWidth / 2 - 27; // Centered horizontally
         
-        // Move the timer up and to the right
-        var y = (screenHeight / 2) + (screenHeight / 4) + 20;  // moved up by reducing the offset
-        var xOffset = 30;  // added an x offset to move to the right
+    //     // Move the timer up and to the right
+    //     var y = (screenHeight / 2) + (screenHeight / 4) + 20;  // moved up by reducing the offset
+    //     var xOffset = 30;  // added an x offset to move to the right
         
-        // Draw the image
-        dc.drawBitmap(
-            x - timerImage.getWidth() / 2 - 10,
-            y - timerImage.getHeight() / 2,  // moved up
-            timerImage
-        );
+    //     // Draw the image
+    //     dc.drawBitmap(
+    //         x - timerImage.getWidth() / 2 - 10,
+    //         y - timerImage.getHeight() / 2,  // moved up
+    //         timerImage
+    //     );
         
-        // Draw the time text to the right of the image
-        var textX = (x + timerImage.getWidth() / 2) + xOffset + 20;  // moved to the right
-        var textY = y;
+    //     // Draw the time text to the right of the image
+    //     var textX = (x + timerImage.getWidth() / 2) + xOffset + 23;  // moved to the right
+    //     var textY = y;
         
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);  // Assuming text color as white
-        dc.drawText(
-            textX, 
-            textY, 
-            Graphics.FONT_XTINY,  // Use appropriate font
-            timeStr,  // The corrected stopwatch or timer time
-            Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER
-        );
-    }
+    //     dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);  // Assuming text color as white
+    //     dc.drawText(
+    //         textX, 
+    //         textY, 
+    //         Graphics.FONT_XTINY,  // Use appropriate font
+    //         timeStr,  // The corrected stopwatch or timer time
+    //         Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER
+    //     );
+    // }
+     function onHide() as Void {}
+     function onExitSleep() as Void {}
+     function onEnterSleep() as Void {}
+     function onPartialUpdate(dc) {}
+     function onShow() as Void {}
+     function onSettingsChanged() as Void {}
 }
