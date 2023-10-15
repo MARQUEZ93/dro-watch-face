@@ -29,6 +29,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
     private var nightImage;
     private var cloudyImage;
     private var thunderImage;
+    private var timerImage;
 
 
     function initialize() {
@@ -43,6 +44,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         cloudyImage = Application.loadResource(Rez.Drawables.cloudy);
         thunderImage = Application.loadResource(Rez.Drawables.thunder);
         heartImage = Application.loadResource(Rez.Drawables.heart);
+        timerImage = Application.loadResource(Rez.Drawables.timer);
     }
 
     function onSettingsChanged() {
@@ -112,7 +114,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         drawSteps(dc);
         drawTemperature(dc);
         drawWeather(dc);
-
+        // drawStopwatchOrTimer(dc);
     }
 
     function onPartialUpdate(dc) {
@@ -264,6 +266,10 @@ class DroFaceWatchView extends WatchUi.WatchFace {
                 break;
         }
 
+        if isNightAndNoPrecipitation() != null {
+            weatherImage = nightImage;
+        }
+
         var imgWidth = weatherImage.getWidth();
         var imgHeight = weatherImage.getHeight();
 
@@ -373,6 +379,10 @@ class DroFaceWatchView extends WatchUi.WatchFace {
 
     private function drawBatteryBluetooth(dc) {
         var battery = DataProvider.getBatteryLevel();
+        var add100EdgeCase = 0;
+        if (battery == 100) {
+            add100EdgeCase = -5;
+        }
         var batteryText = battery.format("%d") + "\u0025";
 
         var bluetoothState = DataProvider.getBluetoothStatus();
@@ -388,7 +398,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 4;
 
-        var x = screenWidth / 2 + radius * Math.cos(angle_rad) - 15;
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad) - 15 + add100EdgeCase;
         var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
 
         dc.setPenWidth(2);
@@ -497,4 +507,22 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         dc.drawArc(centerX, centerY, radius, attr, startAngle, endAngle);
     }
 
+    // private function drawStopwatchOrTimer(dc) {
+    //     // Get the status from DataProvider
+    //     var status = DataProvider.getStopwatchOrTimerStatus();
+
+    //     if (status == null || !status) {
+    //         return;
+    //     }
+
+    //     var x = screenWidth / 2;
+    //     var y = screenHeight / 2;
+
+    //     // Draw the image
+    //     dc.drawBitmap(
+    //         x - imageToDraw.getWidth() / 2, 
+    //         y - imageToDraw.getHeight() / 2,
+    //         timerImage
+    //     );
+    // }
 }
