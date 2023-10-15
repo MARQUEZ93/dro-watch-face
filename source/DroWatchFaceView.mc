@@ -63,9 +63,9 @@ class DroFaceWatchView extends WatchUi.WatchFace {
             Graphics.COLOR_TRANSPARENT
         );
 
-        var x = heartX + heartWidth + 18;
+        var x = heartX + heartWidth + 15;
         var y = heartY + 10;
-         dc.drawBitmap(
+        dc.drawBitmap(
             heartX,
             heartY,
             heartImage 
@@ -74,7 +74,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
             x,
             y,
             Graphics.FONT_XTINY,
-            (heartRate == 0 || heartRate == null) ? "195" : heartRate.format("%d"),
+            (heartRate == 0 || heartRate == null) ? "N/A" : heartRate.format("%d"),
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER // Changed to center justify
         );
     }
