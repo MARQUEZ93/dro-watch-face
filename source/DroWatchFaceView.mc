@@ -161,7 +161,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
             dc.drawText(
                 x,
                 y - 5,
-                Graphics.FONT_SMALL,
+                Graphics.FONT_XTINY,
                 tempString,
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
             );
