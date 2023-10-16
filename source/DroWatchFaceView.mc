@@ -37,46 +37,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         heartImage = Application.loadResource(Rez.Drawables.heart);
     }
 
-    // Load your resources here
-    function onLayout(dc) as Void {
-        setLayout(Rez.Layouts.WatchFace(dc));
-
-        screenWidth = dc.getWidth();
-        screenHeight = dc.getHeight();
-    }
-
-    private function drawHeartRateText(dc) {
-        heartWidth = heartImage.getWidth();
-        var angle_deg = 195; // 8:30 PM on the clock in degrees
-        var angle_rad = angle_deg * (Math.PI / 180);
-        var radius = screenWidth / 2 - 20; // 20 units away from the edge
-
-        var heartX = screenWidth / 2 + radius * Math.cos(angle_rad);
-        var heartY = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
-
-        var heartRate = DataProvider.getHeartRate();
-
-        dc.setColor(
-            (heartRate != null && heartRate > 120) ? Graphics.COLOR_DK_RED : Graphics.COLOR_LT_GRAY,
-            Graphics.COLOR_TRANSPARENT
-        );
-
-        var x = heartX + heartWidth + 15;
-        var y = heartY + 10;
-        dc.drawBitmap(
-            heartX,
-            heartY,
-            heartImage 
-        );
-        dc.drawText(
-            x,
-            y,
-            Graphics.FONT_TINY,
-            (heartRate == 0 || heartRate == null) ? "N/A" : heartRate.format("%d"),
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER // Changed to center justify
-        );
-    }
-
     // Update the view
     function onUpdate(dc) as Void {
         // Call the parent onUpdate function to redraw the layout
@@ -93,6 +53,46 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         drawWeather(dc);
     }
 
+    // Load your resources here
+    function onLayout(dc) as Void {
+        setLayout(Rez.Layouts.WatchFace(dc));
+
+        screenWidth = dc.getWidth();
+        screenHeight = dc.getHeight();
+    }
+
+    private function drawHeartRateText(dc) {
+        heartWidth = heartImage.getWidth();
+        var angle_deg = 195; // 8:30 PM on the clock in degrees
+        var angle_rad = angle_deg * (Math.PI / 180);
+        var radius = screenWidth / 2 - 20; // 20 units away from the edge
+
+        var heartX = screenWidth / 2 + radius * Math.cos(angle_rad) + 10;
+        var heartY = screenHeight / 2 - radius * Math.sin(angle_rad) + 10; // Note the '-' because of the coordinate system
+
+        var heartRate = DataProvider.getHeartRate();
+
+        dc.setColor(
+            (heartRate != null && heartRate > 120) ? Graphics.COLOR_DK_RED : Graphics.COLOR_LT_GRAY,
+            Graphics.COLOR_TRANSPARENT
+        );
+
+        var x = heartX + heartWidth + 23;
+        var y = heartY + 20;
+        dc.drawBitmap(
+            heartX,
+            heartY + 10,
+            heartImage 
+        );
+        dc.drawText(
+            x,
+            y,
+            Graphics.FONT_TINY,
+            (heartRate == 0 || heartRate == null) ? "N/A" : heartRate.format("%d"),
+            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER // Changed to center justify
+        );
+    }
+
     private function drawSteps(dc) {
         var steps = DataProvider.getSteps();
         var stepsInK = steps / 1000.0;
@@ -107,14 +107,14 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 2 - 20;
 
-        var x = screenWidth / 2 + radius * Math.cos(angle_rad) - 40;
-        var y = screenHeight / 2 - radius * Math.sin(angle_rad) + 10;
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad) - 65;
+        var y = screenHeight / 2 - radius * Math.sin(angle_rad) + 30;
 
         var imgWidth = stepsImage.getWidth();
         var imgHeight = stepsImage.getHeight();
-        // Draw the image to the left of the text
+        // Draw the steps image to the left of the text
         dc.drawBitmap(
-            x - imgWidth + 5, 
+            x - imgWidth, 
             y - imgHeight / 2,
             stepsImage
         );
@@ -138,8 +138,8 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 2 - 20; // 20 units away from the edge
 
-        var x = screenWidth / 2 + radius * Math.cos(angle_rad) + 45;
-        var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad) + 43;
+        var y = screenHeight / 2 - radius * Math.sin(angle_rad) + 10; // Note the '-' because of the coordinate system
 
         dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
         if (temperature == null){
@@ -242,7 +242,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         var radius = screenWidth / 2 - 20;
 
         var x = screenWidth / 2 + radius * Math.cos(angle_rad); // Adjusted x-coordinate
-        var y = screenHeight / 2 - radius * Math.sin(angle_rad);
+        var y = screenHeight / 2 - radius * Math.sin(angle_rad) + 10;
 
         dc.drawBitmap(
             x,  // Changed from fixed 100 to calculated x
@@ -272,7 +272,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         var colonString = ":";
 
         var x = screenWidth / 2; // Centered horizontally
-        var y = screenHeight / 2 - 10; // Centered vertically
+        var y = screenHeight / 2 + 5; // Centered vertically
 
         var fullTimeString = hoursString + colonString + minutesString + " " + am_pm;
 
@@ -296,7 +296,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawText(
             screenWidth / 2,
-            35,
+            45,
             Graphics.FONT_SMALL,
             dateString,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
@@ -325,8 +325,8 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         var angle_rad = angle_deg * (Math.PI / 180);
         var radius = screenWidth / 4;
 
-        var x = screenWidth / 2 + radius * Math.cos(angle_rad) - 15 + add100EdgeCase;
-        var y = screenHeight / 2 - radius * Math.sin(angle_rad); // Note the '-' because of the coordinate system
+        var x = screenWidth / 2 + radius * Math.cos(angle_rad) - 36 + add100EdgeCase;
+        var y = screenHeight / 2 - radius * Math.sin(angle_rad) + 10; // Note the '-' because of the coordinate system
 
         dc.setPenWidth(2);
         dc.setColor(
@@ -368,7 +368,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         );
         // Draw the bluetooth to the right of the text
         dc.drawBitmap(
-            x + 60 - add100EdgeCase, 
+            x + 81 - add100EdgeCase, 
             y + height / 2 - 13,
             bluetoothImg
         );
@@ -385,7 +385,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         var radius = screenWidth / 2 - 20;
 
         var x = screenWidth / 2 + radius * Math.cos(angle_rad) - 60;
-        var y = screenHeight / 2 - radius * Math.sin(angle_rad) + 10;
+        var y = screenHeight / 2 - radius * Math.sin(angle_rad) + 20;
 
         // Set text color based on connection status
         dc.setColor(
