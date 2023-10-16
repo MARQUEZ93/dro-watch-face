@@ -23,7 +23,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
     private var snowyImage;
     private var cloudyImage;
     private var thunderImage;
-    private var timerImage;
 
     function initialize() {
         WatchFace.initialize();
@@ -36,7 +35,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         cloudyImage = Application.loadResource(Rez.Drawables.cloudy);
         thunderImage = Application.loadResource(Rez.Drawables.thunder);
         heartImage = Application.loadResource(Rez.Drawables.heart);
-        timerImage = Application.loadResource(Rez.Drawables.timer);
     }
 
     // Load your resources here
@@ -73,7 +71,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         dc.drawText(
             x,
             y,
-            Graphics.FONT_XTINY,
+            Graphics.FONT_TINY,
             (heartRate == 0 || heartRate == null) ? "N/A" : heartRate.format("%d"),
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER // Changed to center justify
         );
@@ -93,7 +91,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         drawSteps(dc);
         drawTemperature(dc);
         drawWeather(dc);
-        // drawTimer(dc);
     }
 
     private function drawSteps(dc) {
@@ -125,7 +122,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         dc.drawText(
             x + 25,
             y,
-            Graphics.FONT_XTINY,
+            Graphics.FONT_TINY,
             formattedSteps,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
         );
@@ -150,7 +147,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
             dc.drawText(
                 x,
                 y,
-                Graphics.FONT_XTINY,
+                Graphics.FONT_TINY,
                 tempString,
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
             );
@@ -161,7 +158,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
             dc.drawText(
                 x,
                 y - 5,
-                Graphics.FONT_XTINY,
+                Graphics.FONT_TINY,
                 tempString,
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
             );
@@ -285,7 +282,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         dc.drawText(
             x,
             y,
-            Graphics.FONT_MEDIUM,
+            Graphics.FONT_LARGE,
             fullTimeString,
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
         );
@@ -365,7 +362,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         dc.drawText(
             text_x,
             text_y,
-            Graphics.FONT_XTINY,
+            Graphics.FONT_TINY,
             batteryText,
             Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER // Left justify and vertically center
         );
@@ -419,63 +416,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         dc.drawArc(centerX, centerY, radius, attr, startAngle, endAngle);
     }
 
-    // private function drawTimer(dc) {
-    //     var status = DataProvider.getTimerTime();
-    //     if (status == null) {
-    //         return;
-    //     }
-
-    //     // Normalize to seconds
-    //     var totalSeconds = status / 1000;
-
-    //     // Calculate hours, minutes and seconds
-    //     var hours = (totalSeconds / 3600);
-    //     var minutes = ((totalSeconds % 3600) / 60);
-    //     var seconds = (totalSeconds % 60);
-
-    //     // Manually zero-pad numbers and format as "hh:mm:ss"
-    //     var timeStr = "";
-    //     if (hours < 10) {
-    //         timeStr += "0";
-    //     }
-    //     timeStr += hours.toString() + ":";
-
-    //     if (minutes < 10) {
-    //         timeStr += "0";
-    //     }
-    //     timeStr += minutes.toString() + ":";  // Add minutes and the colon here
-
-    //     if (seconds < 10) {
-    //         timeStr += "0";
-    //     }
-    //     timeStr += seconds.toString();  // Finally add seconds
-        
-    //     var x = screenWidth / 2 - 27; // Centered horizontally
-        
-    //     // Move the timer up and to the right
-    //     var y = (screenHeight / 2) + (screenHeight / 4) + 20;  // moved up by reducing the offset
-    //     var xOffset = 30;  // added an x offset to move to the right
-        
-    //     // Draw the image
-    //     dc.drawBitmap(
-    //         x - timerImage.getWidth() / 2 - 10,
-    //         y - timerImage.getHeight() / 2,  // moved up
-    //         timerImage
-    //     );
-        
-    //     // Draw the time text to the right of the image
-    //     var textX = (x + timerImage.getWidth() / 2) + xOffset + 23;  // moved to the right
-    //     var textY = y;
-        
-    //     dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);  // Assuming text color as white
-    //     dc.drawText(
-    //         textX, 
-    //         textY, 
-    //         Graphics.FONT_XTINY,  // Use appropriate font
-    //         timeStr,  // The corrected stopwatch or timer time
-    //         Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER
-    //     );
-    // }
      function onHide() as Void {}
      function onExitSleep() as Void {}
      function onEnterSleep() as Void {}

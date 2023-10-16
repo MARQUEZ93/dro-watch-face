@@ -9,5 +9,4 @@
     <bitmap id="cloudy" filename="icons/cloudy.png"/>
     <bitmap id="snowy" filename="icons/snowy.png"/>
     <bitmap id="heart" filename="icons/new_heart.png"/>
-    <bitmap id="timer" filename="icons/timer.png"/>
 </drawables>

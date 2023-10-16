@@ -52,6 +52,9 @@ module DataProvider {
         var conditions = Weather.getCurrentConditions();
         if (conditions != null) {
             var tempCelsius = conditions.temperature;
+            if (tempCelsius == null) {
+                return null;
+            }
             var tempFahrenheit = (tempCelsius * 9/5) + 32;
             return tempFahrenheit;
         }
@@ -64,12 +67,5 @@ module DataProvider {
             return conditions.condition;
         }
         return null; 
-    }
-    function getTimerTime() {
-        var system = Toybox.System;
-        if (system != null) {
-            return system.getTimer();
-        }
-        return null;
     }
 }
