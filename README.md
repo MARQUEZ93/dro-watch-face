@@ -1,8 +1,8 @@
 # The Dro Garmin Watch Face
 
---- Garmin Forerunner 255m
+Garmin Forerunner 255m
 
-<p align="center"><img src="https://i.imgur.com/NadKoiL.jpg" width="400px" /></p>
+<p align="center"><img src="https://i.imgur.com/NadKoiL.jpg" width="200px" /></p>
 
 ## Features
 - 🕚 Time (Hours/Minutes/Optional Seconds)
