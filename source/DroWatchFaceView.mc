@@ -79,13 +79,17 @@ class DroFaceWatchView extends WatchUi.WatchFace {
 
         var x = heartX + heartWidth + 23;
         var y = heartY + 20;
+        var heartTextOffset = -5;
+        if (heartRate != null && heartRate >= 100) {
+            heartTextOffset = 0;
+        }
         dc.drawBitmap(
             heartX,
             heartY + 10,
             heartImage 
         );
         dc.drawText(
-            x,
+            x + heartTextOffset,
             y,
             Graphics.FONT_TINY,
             (heartRate == 0 || heartRate == null) ? "N/A" : heartRate.format("%d"),
@@ -95,6 +99,10 @@ class DroFaceWatchView extends WatchUi.WatchFace {
 
     private function drawSteps(dc) {
         var steps = DataProvider.getSteps();
+        var stepsOffset = 0;
+        if (steps != null && steps > 10000.0){
+            stepsOffset = -5;
+        }
         var stepsInK = steps / 1000.0;
         var formattedSteps = stepsInK.format("%.1f") + "K";
 
@@ -114,7 +122,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         var imgHeight = stepsImage.getHeight();
         // Draw the steps image to the left of the text
         dc.drawBitmap(
-            x - imgWidth, 
+            x - imgWidth + stepsOffset, 
             y - imgHeight / 2,
             stepsImage
         );
@@ -129,7 +137,11 @@ class DroFaceWatchView extends WatchUi.WatchFace {
     }
 
     private function drawTemperature(dc) {
+        var tempOffset = 0;
         var temperature = DataProvider.getTemperature();
+        if (temperature != null && temperature >= 100) {
+            tempOffset = 5;
+        }
         var tempString = (temperature == null) ? "N/A" : temperature.format("%d");
         var degreeSymbol = (temperature == null) ? "" : "°";
 
@@ -152,7 +164,6 @@ class DroFaceWatchView extends WatchUi.WatchFace {
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
             );
         }
-
         // Draw the degree symbol, with a manual offset
         if (temperature != null) {
             dc.drawText(
@@ -165,7 +176,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
             var xOffsetDegree = 12;
             var yOffsetDegree = -5;
             dc.drawText(
-                x + xOffsetDegree,
+                x + xOffsetDegree + tempOffset,
                 y + yOffsetDegree,
                 Graphics.FONT_TINY,
                 degreeSymbol,
@@ -306,9 +317,9 @@ class DroFaceWatchView extends WatchUi.WatchFace {
 
     private function drawBatteryBluetooth(dc) {
         var battery = DataProvider.getBatteryLevel();
-        var add100EdgeCase = 0;
+        var add100EdgeCase = 8;
         if (battery == 100) {
-            add100EdgeCase = -5;
+            add100EdgeCase = -4;
         }
         var batteryText = battery.format("%d") + "\u0025";
 
@@ -368,37 +379,8 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         );
         // Draw the bluetooth to the right of the text
         dc.drawBitmap(
-            x + 81 - add100EdgeCase, 
+            x + 78 - add100EdgeCase, 
             y + height / 2 - 13,
-            bluetoothImg
-        );
-    }
-    private function drawBluetooth(dc) {
-        var bluetoothState = DataProvider.getBluetoothStatus();
-    
-        // Check if connected
-        var isConnected = (bluetoothState == 2); // Or use the appropriate enum if available
-        
-        // Choose your x, y position for drawing
-        var angle_deg = 25; // 2:45 PM, symmetrical to 195 degrees for heart
-        var angle_rad = angle_deg * (Math.PI / 180);
-        var radius = screenWidth / 2 - 20;
-
-        var x = screenWidth / 2 + radius * Math.cos(angle_rad) - 60;
-        var y = screenHeight / 2 - radius * Math.sin(angle_rad) + 20;
-
-        // Set text color based on connection status
-        dc.setColor(
-            isConnected ? Graphics.COLOR_BLUE : Graphics.COLOR_RED,
-            Graphics.COLOR_TRANSPARENT
-        );
-        var bluetoothImg = isConnected ? connectedImage : disconnectedImage; 
-        var imgHeight = bluetoothImg.getHeight();
-
-        // Draw the image to the left of the text
-        dc.drawBitmap(
-            x + 20, 
-            y - imgHeight / 2 + 8,
             bluetoothImg
         );
     }
