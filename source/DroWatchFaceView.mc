@@ -158,7 +158,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
             // Draw the temperature number
             dc.drawText(
                 x,
-                y,
+                y - 5,
                 Graphics.FONT_TINY,
                 tempString,
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
