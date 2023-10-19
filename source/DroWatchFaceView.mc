@@ -157,7 +157,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         if (temperature == null){
             // Draw the temperature number
             dc.drawText(
-                x,
+                x + 5,
                 y - 5,
                 Graphics.FONT_TINY,
                 tempString,
@@ -189,7 +189,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         var weatherCondition = DataProvider.getForecast();
 
         if (weatherCondition == null) {
-            return;
+            weatherCondition = 0;
         }
 
         var weatherImage;
