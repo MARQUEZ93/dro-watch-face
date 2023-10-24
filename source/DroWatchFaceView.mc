@@ -379,7 +379,7 @@ class DroFaceWatchView extends WatchUi.WatchFace {
         );
         // Draw the bluetooth to the right of the text
         dc.drawBitmap(
-            x + 78 - add100EdgeCase, 
+            x + 83 - add100EdgeCase, 
             y + height / 2 - 13,
             bluetoothImg
         );
